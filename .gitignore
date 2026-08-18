@@ -1,0 +1,23 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE & System Files
+.vscode/
+.idea/
+.DS_Store
+
+# Data Cache / Generated Binaries
+retrieval/faiss_index.bin
+retrieval/chunk_metadata.json
+data_prep/processed_corpus.json
+chunking/processed_chunks.json
+
+# Keys / Environment Secrets
+.env

@@ -1,0 +1,582 @@
+{
+  "query_count": 50,
+  "metrics": {
+    "STT Latency (ms)": {
+      "P50": 45.0,
+      "P70": 45.0,
+      "P100 (Max)": 45.0
+    },
+    "Retrieval Latency (FAISS) (ms)": {
+      "P50": 50.94,
+      "P70": 52.63,
+      "P100 (Max)": 136.59
+    },
+    "Guardrail Validation (ms)": {
+      "P50": 0.02,
+      "P70": 0.02,
+      "P100 (Max)": 0.03
+    },
+    "LLM Generation (ms)": {
+      "P50": 60.0,
+      "P70": 120.01,
+      "P100 (Max)": 120.1
+    },
+    "Total Pipeline E2E (ms)": {
+      "P50": 51.32,
+      "P70": 53.25,
+      "P100 (Max)": 137.1
+    }
+  },
+  "query_runs": [
+    {
+      "query_id": "bn_q_q_0",
+      "language": "bn",
+      "query": "ভারতের রাজধানী কোথায়? (0)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 136.59,
+      "guardrail_ms": 0.03,
+      "llm_ms": 120.02,
+      "total_ms": 137.1,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_0",
+      "language": "hi",
+      "query": "भारत की राजधानी क्या है? (0)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 59.52,
+      "guardrail_ms": 0.03,
+      "llm_ms": 0.0,
+      "total_ms": 59.7,
+      "is_relevant": false
+    },
+    {
+      "query_id": "mr_q_q_0",
+      "language": "mr",
+      "query": "भारताची राजधानी कोणती आहे? (0)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 58.84,
+      "guardrail_ms": 0.03,
+      "llm_ms": 0.0,
+      "total_ms": 59.03,
+      "is_relevant": false
+    },
+    {
+      "query_id": "ta_q_q_0",
+      "language": "ta",
+      "query": "இந்தியாவின் தலைநகரம் எது? (0)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 52.53,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.02,
+      "total_ms": 52.8,
+      "is_relevant": true
+    },
+    {
+      "query_id": "te_q_q_0",
+      "language": "te",
+      "query": "భారతదేశ రాజధాని ఏది? (0)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 63.26,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 63.43,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_1",
+      "language": "bn",
+      "query": "রবীন্দ্রনাথ ঠাকুর কে ছিলেন? (1)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 71.76,
+      "guardrail_ms": 0.03,
+      "llm_ms": 120.02,
+      "total_ms": 72.07,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_1",
+      "language": "hi",
+      "query": "मौसम पूर्वानुमान कैसे काम करता है? (1)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 67.59,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 67.81,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_1",
+      "language": "mr",
+      "query": "गेटवे ऑफ इंडिया कुठे आहे? (1)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 47.9,
+      "guardrail_ms": 0.01,
+      "llm_ms": 120.01,
+      "total_ms": 48.07,
+      "is_relevant": true
+    },
+    {
+      "query_id": "ta_q_q_1",
+      "language": "ta",
+      "query": "தமிழ்நாட்டின் தலைநகரம் எது? (1)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 51.06,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 51.22,
+      "is_relevant": false
+    },
+    {
+      "query_id": "te_q_q_1",
+      "language": "te",
+      "query": "చార్మినార్ ఎక్కడ ఉంది? (1)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 51.68,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 51.81,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_2",
+      "language": "bn",
+      "query": "সুন্দরবন কেন বিখ্যাত? (2)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 46.45,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.02,
+      "total_ms": 46.67,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_2",
+      "language": "hi",
+      "query": "हवा महल कहाँ स्थित है? (2)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 46.25,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.1,
+      "total_ms": 46.56,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_2",
+      "language": "mr",
+      "query": "शिवछत्रपतींचे जन्मस्थान कोणते? (2)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 50.5,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 50.62,
+      "is_relevant": false
+    },
+    {
+      "query_id": "ta_q_q_2",
+      "language": "ta",
+      "query": "மீனாட்சி அம்மன் கோவில் எங்கு உள்ளது? (2)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 47.4,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 47.53,
+      "is_relevant": false
+    },
+    {
+      "query_id": "te_q_q_2",
+      "language": "te",
+      "query": "తెలుగు భాష ప్రాముఖ్యత ఏమిటి? (2)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 49.6,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 49.71,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_3",
+      "language": "bn",
+      "query": "ভারতের রাজধানী কোথায়? (3)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 41.51,
+      "guardrail_ms": 0.01,
+      "llm_ms": 120.01,
+      "total_ms": 41.66,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_3",
+      "language": "hi",
+      "query": "ताज महल किसने बनवाया? (3)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 41.91,
+      "guardrail_ms": 0.01,
+      "llm_ms": 120.01,
+      "total_ms": 42.07,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_3",
+      "language": "mr",
+      "query": "भारताची राजधानी कोणती आहे? (3)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 52.01,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 52.13,
+      "is_relevant": false
+    },
+    {
+      "query_id": "ta_q_q_3",
+      "language": "ta",
+      "query": "சூரிய குடும்பத்தில் மிகப்பெரிய கோள் எது? (3)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 54.27,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 54.44,
+      "is_relevant": true
+    },
+    {
+      "query_id": "te_q_q_3",
+      "language": "te",
+      "query": "భారతదేశ రాజధాని ఏది? (3)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 41.53,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 41.64,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_4",
+      "language": "bn",
+      "query": "রবীন্দ্রনাথ ঠাকুর কে ছিলেন? (4)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 53.45,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 53.65,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_4",
+      "language": "hi",
+      "query": "योग के क्या फायदे हैं? (4)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 51.24,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 51.46,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_4",
+      "language": "mr",
+      "query": "गेटवे ऑफ इंडिया कुठे आहे? (4)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 53.73,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 53.94,
+      "is_relevant": true
+    },
+    {
+      "query_id": "ta_q_q_4",
+      "language": "ta",
+      "query": "இந்தியாவின் தலைநகரம் எது? (4)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 54.04,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 54.18,
+      "is_relevant": false
+    },
+    {
+      "query_id": "te_q_q_4",
+      "language": "te",
+      "query": "చార్మినార్ ఎక్కడ ఉంది? (4)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 56.77,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 56.9,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_5",
+      "language": "bn",
+      "query": "সুন্দরবন কেন বিখ্যাত? (5)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 48.89,
+      "guardrail_ms": 0.01,
+      "llm_ms": 120.01,
+      "total_ms": 49.05,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_5",
+      "language": "hi",
+      "query": "भारत की राजधानी क्या है? (5)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 38.6,
+      "guardrail_ms": 0.01,
+      "llm_ms": 120.01,
+      "total_ms": 38.74,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_5",
+      "language": "mr",
+      "query": "शिवछत्रपतींचे जन्मस्थान कोणते? (5)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 42.77,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 42.87,
+      "is_relevant": false
+    },
+    {
+      "query_id": "ta_q_q_5",
+      "language": "ta",
+      "query": "தமிழ்நாட்டின் தலைநகரம் எது? (5)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 48.42,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 48.55,
+      "is_relevant": false
+    },
+    {
+      "query_id": "te_q_q_5",
+      "language": "te",
+      "query": "తెలుగు భాష ప్రాముఖ్యత ఏమిటి? (5)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 55.04,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 55.18,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_6",
+      "language": "bn",
+      "query": "ভারতের রাজধানী কোথায়? (6)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 51.26,
+      "guardrail_ms": 0.01,
+      "llm_ms": 120.01,
+      "total_ms": 51.43,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_6",
+      "language": "hi",
+      "query": "मौसम पूर्वानुमान कैसे काम करता है? (6)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 51.56,
+      "guardrail_ms": 0.01,
+      "llm_ms": 120.01,
+      "total_ms": 51.72,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_6",
+      "language": "mr",
+      "query": "भारताची राजधानी कोणती आहे? (6)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 52.35,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 52.48,
+      "is_relevant": false
+    },
+    {
+      "query_id": "ta_q_q_6",
+      "language": "ta",
+      "query": "மீனாட்சி அம்மன் கோவில் எங்கு உள்ளது? (6)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 50.76,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 50.9,
+      "is_relevant": false
+    },
+    {
+      "query_id": "te_q_q_6",
+      "language": "te",
+      "query": "భారతదేశ రాజధాని ఏది? (6)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 47.42,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 47.53,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_7",
+      "language": "bn",
+      "query": "রবীন্দ্রনাথ ঠাকুর কে ছিলেন? (7)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 48.5,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.02,
+      "total_ms": 48.84,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_7",
+      "language": "hi",
+      "query": "हवा महल कहाँ स्थित है? (7)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 53.62,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 53.84,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_7",
+      "language": "mr",
+      "query": "गेटवे ऑफ इंडिया कुठे आहे? (7)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 52.86,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.02,
+      "total_ms": 53.08,
+      "is_relevant": true
+    },
+    {
+      "query_id": "ta_q_q_7",
+      "language": "ta",
+      "query": "சூரிய குடும்பத்தில் மிகப்பெரிய கோள் எது? (7)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 56.51,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 56.71,
+      "is_relevant": true
+    },
+    {
+      "query_id": "te_q_q_7",
+      "language": "te",
+      "query": "చార్మినార్ ఎక్కడ ఉంది? (7)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 52.26,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 52.4,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_8",
+      "language": "bn",
+      "query": "সুন্দরবন কেন বিখ্যাত? (8)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 49.05,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 49.26,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_8",
+      "language": "hi",
+      "query": "ताज महल किसने बनवाया? (8)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 47.61,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 47.81,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_8",
+      "language": "mr",
+      "query": "शिवछत्रपतींचे जन्मस्थान कोणते? (8)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 50.83,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 50.96,
+      "is_relevant": false
+    },
+    {
+      "query_id": "ta_q_q_8",
+      "language": "ta",
+      "query": "இந்தியாவின் தலைநகரம் எது? (8)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 52.23,
+      "guardrail_ms": 0.02,
+      "llm_ms": 0.0,
+      "total_ms": 52.38,
+      "is_relevant": false
+    },
+    {
+      "query_id": "te_q_q_8",
+      "language": "te",
+      "query": "తెలుగు భాష ప్రాముఖ్యత ఏమిటి? (8)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 44.67,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 87.93,
+      "is_relevant": false
+    },
+    {
+      "query_id": "bn_q_q_9",
+      "language": "bn",
+      "query": "ভারতের রাজধানী কোথায়? (9)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 41.13,
+      "guardrail_ms": 0.01,
+      "llm_ms": 120.01,
+      "total_ms": 41.36,
+      "is_relevant": true
+    },
+    {
+      "query_id": "hi_q_q_9",
+      "language": "hi",
+      "query": "योग के क्या फायदे हैं? (9)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 43.3,
+      "guardrail_ms": 0.02,
+      "llm_ms": 120.01,
+      "total_ms": 43.5,
+      "is_relevant": true
+    },
+    {
+      "query_id": "mr_q_q_9",
+      "language": "mr",
+      "query": "भारताची राजधानी कोणती आहे? (9)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 48.07,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 48.2,
+      "is_relevant": false
+    },
+    {
+      "query_id": "ta_q_q_9",
+      "language": "ta",
+      "query": "தமிழ்நாட்டின் தலைநகரம் எது? (9)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 40.1,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 40.22,
+      "is_relevant": false
+    },
+    {
+      "query_id": "te_q_q_9",
+      "language": "te",
+      "query": "భారతదేశ రాజధాని ఏది? (9)",
+      "stt_ms": 45.0,
+      "retrieval_ms": 43.88,
+      "guardrail_ms": 0.01,
+      "llm_ms": 0.0,
+      "total_ms": 43.99,
+      "is_relevant": false
+    }
+  ]
+}

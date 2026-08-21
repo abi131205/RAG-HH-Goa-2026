@@ -14,7 +14,7 @@ UNSAFE_KEYWORDS = [
 ]
 
 class GuardrailEngine:
-    def __init__(self, relevance_threshold: float = 0.15, grounding_threshold: float = 0.25):
+    def __init__(self, relevance_threshold: float = 0.05, grounding_threshold: float = 0.15):
         self.relevance_threshold = relevance_threshold
         self.grounding_threshold = grounding_threshold
 

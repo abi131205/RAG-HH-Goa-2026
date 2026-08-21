@@ -1,4 +1,161 @@
+import sys
 import json
+import subprocess
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).parent
+
+print("==================================================")
+print("🚀 EXPANDING TO ALL 14 INDIC LANGUAGES (5 TOPICS EACH)")
+print("==================================================")
+
+# ----------------------------------------------------
+# 1. UPDATE VECTOR STORE (STRICT LANGUAGE FILTER)
+# ----------------------------------------------------
+vec_path = ROOT_DIR / "retrieval" / "vector_store.py"
+print(f"[1/5] Updating {vec_path} with STRICT Language Filter...")
+
+vector_store_code = """import json
+import os
+import time
+import numpy as np
+import faiss
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+from sentence_transformers import SentenceTransformer
+
+CHUNKS_FILE = Path(__file__).parent.parent / "chunking" / "processed_chunks.json"
+INDEX_FILE = Path(__file__).parent / "faiss_index.bin"
+META_FILE = Path(__file__).parent / "chunk_metadata.json"
+
+class FAISSVectorStore:
+    def __init__(self, model_name: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"):
+        self.model_name = model_name
+        print(f"Initializing Vector Store with model: {model_name}...")
+        self.model = SentenceTransformer(model_name)
+        self.index: Optional[faiss.IndexFlatIP] = None
+        self.metadata: List[Dict[str, Any]] = []
+        
+    def build_index(self, batch_size: int = 256):
+        if not CHUNKS_FILE.exists():
+            raise FileNotFoundError(f"Chunks file not found at {CHUNKS_FILE}.")
+            
+        print(f"Loading chunks from {CHUNKS_FILE}...")
+        with open(CHUNKS_FILE, "r", encoding="utf-8") as f:
+            chunks = json.load(f)
+            
+        print(f"Embedding {len(chunks)} chunks using {self.model_name}...")
+        start_time = time.time()
+        
+        texts = [c["text"] for c in chunks]
+        embeddings = self.model.encode(
+            texts, 
+            batch_size=batch_size, 
+            show_progress_bar=True, 
+            normalize_embeddings=True
+        )
+        
+        dim = embeddings.shape[1]
+        print(f"Embeddings shape: {embeddings.shape}. Creating FAISS IndexFlatIP (dimension {dim})...")
+        self.index = faiss.IndexFlatIP(dim)
+        self.index.add(np.array(embeddings, dtype=np.float32))
+        self.metadata = chunks
+        
+        elapsed = time.time() - start_time
+        print(f"FAISS Index built in {elapsed:.2f} seconds ({len(chunks)} vectors).")
+        self.save_index()
+        
+    def save_index(self):
+        if self.index is not None:
+            faiss.write_index(self.index, str(INDEX_FILE))
+            print(f"Saved FAISS index to {INDEX_FILE}")
+            
+        with open(META_FILE, "w", encoding="utf-8") as f:
+            json.dump(self.metadata, f, ensure_ascii=False)
+        print(f"Saved metadata to {META_FILE}")
+        
+    def load_index(self) -> bool:
+        if INDEX_FILE.exists() and META_FILE.exists():
+            print(f"Loading existing FAISS index from {INDEX_FILE}...")
+            self.index = faiss.read_index(str(INDEX_FILE))
+            with open(META_FILE, "r", encoding="utf-8") as f:
+                self.metadata = json.load(f)
+            print(f"Successfully loaded FAISS index with {self.index.ntotal} vectors.")
+            return True
+        return False
+        
+    def retrieve(self, query: str, top_k: int = 5, lang_filter: Optional[str] = None) -> List[Dict[str, Any]]:
+        if self.index is None:
+            if not self.load_index():
+                raise RuntimeError("FAISS index not initialized. Call build_index() first.")
+                
+        search_k = min(1000, self.index.ntotal)
+        query_vector = self.model.encode([query], normalize_embeddings=True)
+        scores, indices = self.index.search(np.array(query_vector, dtype=np.float32), search_k)
+        
+        # 1. STRICT PASS: Filter ONLY chunks matching target language
+        strict_results = []
+        if lang_filter and lang_filter != "auto":
+            for score, idx in zip(scores[0], indices[0]):
+                if idx < 0 or idx >= len(self.metadata):
+                    continue
+                item = self.metadata[idx]
+                if item.get("language") == lang_filter:
+                    strict_results.append({
+                        "chunk_id": item["chunk_id"],
+                        "score": float(score),
+                        "language": item["language"],
+                        "text": item["text"],
+                        "raw_text": item["raw_text"],
+                        "passage_id": item["passage_id"],
+                        "query_id": item["query_id"],
+                        "is_selected": item.get("is_selected", 0)
+                    })
+                    if len(strict_results) >= top_k:
+                        break
+
+        # Return strict language matches if found!
+        if len(strict_results) > 0:
+            return strict_results
+            
+        # 2. Fallback if zero target language matches exist
+        fallback_results = []
+        for score, idx in zip(scores[0], indices[0]):
+            if idx < 0 or idx >= len(self.metadata):
+                continue
+            item = self.metadata[idx]
+            fallback_results.append({
+                "chunk_id": item["chunk_id"],
+                "score": float(score),
+                "language": item["language"],
+                "text": item["text"],
+                "raw_text": item["raw_text"],
+                "passage_id": item["passage_id"],
+                "query_id": item["query_id"],
+                "is_selected": item.get("is_selected", 0)
+            })
+            if len(fallback_results) >= top_k:
+                break
+                
+        return fallback_results
+
+if __name__ == "__main__":
+    store = FAISSVectorStore()
+    if not store.load_index():
+        store.build_index()
+"""
+
+with open(vec_path, "w", encoding="utf-8") as f:
+    f.write(vector_store_code)
+
+
+# ----------------------------------------------------
+# 2. POPULATE 5 TOPICS PER LANGUAGE IN DATASET LOADER
+# ----------------------------------------------------
+loader_path = ROOT_DIR / "data_prep" / "loader.py"
+print(f"[2/5] Updating {loader_path} with 5 Topics per Language...")
+
+loader_code = """import json
 import os
 from pathlib import Path
 from typing import Dict, List, Any
@@ -199,3 +356,110 @@ def load_and_process_msmarco(query_row_limit: int = 500) -> Dict[str, Any]:
 
 if __name__ == "__main__":
     load_and_process_msmarco(query_row_limit=500)
+"""
+
+with open(loader_path, "w", encoding="utf-8") as f:
+    f.write(loader_code)
+
+
+# ----------------------------------------------------
+# 3. TUNED GUARDRAIL THRESHOLDS
+# ----------------------------------------------------
+guard_path = ROOT_DIR / "guardrails" / "guardrail_engine.py"
+print(f"[3/5] Tuning Guardrail Threshold in {guard_path}...")
+
+with open(guard_path, "r", encoding="utf-8") as f:
+    guard_text = f.read()
+
+guard_text = guard_text.replace(
+    "relevance_threshold: float = 0.35, grounding_threshold: float = 0.40",
+    "relevance_threshold: float = 0.05, grounding_threshold: float = 0.15"
+)
+guard_text = guard_text.replace(
+    "relevance_threshold: float = 0.15, grounding_threshold: float = 0.25",
+    "relevance_threshold: float = 0.05, grounding_threshold: float = 0.15"
+)
+
+with open(guard_path, "w", encoding="utf-8") as f:
+    f.write(guard_text)
+
+
+# ----------------------------------------------------
+# 4. UPDATE APP/STATIC/INDEX.HTML (14 PRESET CHIPS)
+# ----------------------------------------------------
+html_path = ROOT_DIR / "app" / "static" / "index.html"
+print(f"[4/5] Updating {html_path} with 14 Language Preset Buttons...")
+
+with open(html_path, "r", encoding="utf-8") as f:
+    html_content = f.read()
+
+new_preset_html = """                <div class="presets-section">
+                    <span class="preset-title">Click Sample Query to Try:</span>
+                    <div class="preset-chips">
+                        <button class="chip" data-query="தலைநகரம்" data-lang="ta">TA: தலைநகரம்</button>
+                        <button class="chip" data-query="पीरियड 3 तत्व" data-lang="hi">HI: पीरियड 3 तत्व</button>
+                        <button class="chip" data-query="భారతదేశ రాజధాని" data-lang="te">TE: భారతదేశ రాజధాని</button>
+                        <button class="chip" data-query="সুন্দরবন বিখ্যাত" data-lang="bn">BN: সুন্দরবন বিখ্যাত</button>
+                        <button class="chip" data-query="भारताची राजधानी" data-lang="mr">MR: भारताची राजधानी</button>
+                        <button class="chip" data-query="ભારતની રાજધાની" data-lang="gu">GU: ભારતની રાજધાની</button>
+                        <button class="chip" data-query="ಭಾರತದ ರಾಜಧಾನಿ" data-lang="kn">KN: ಭಾರತದ ರಾಜಧಾನಿ</button>
+                        <button class="chip" data-query="ഇന്ത്യയുടെ തലസ്ഥാനം" data-lang="ml">ML: തലസ്ഥാനം</button>
+                        <button class="chip" data-query="ਭਾਰਤ ਦੀ ਰਾਜਧਾਨੀ" data-lang="pa">PA: ਭਾਰਤ ਦੀ ਰਾਜਧਾਨੀ</button>
+                        <button class="chip" data-query="ভাৰতৰ ৰাজধানী" data-lang="as">AS: ভাৰতৰ ৰাজধানী</button>
+                        <button class="chip" data-query="ଭାରତର ରାଜଧାନୀ" data-lang="or">OR: ଭାରତର ରାଜଧାନୀ</button>
+                        <button class="chip" data-query="भारतको राजधानी" data-lang="ne">NE: भारतको राजधानी</button>
+                        <button class="chip" data-query="भारतस्य राजधानी" data-lang="sa">SA: भारतस्य राजधानी</button>
+                        <button class="chip" data-query="بھارت کا دارالحکومت" data-lang="ur">UR: دارالحکومت</button>
+                    </div>
+                </div>"""
+
+# Replace preset section if present
+if '<div class="presets-section">' in html_content:
+    start_idx = html_content.find('<div class="presets-section">')
+    end_idx = html_content.find('</div>\n            </section>', start_idx)
+    if end_idx != -1:
+        html_content = html_content[:start_idx] + new_preset_html + html_content[end_idx + 6:]
+
+with open(html_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+
+# ----------------------------------------------------
+# 5. REBUILD DATASET, CHUNKS & FAISS INDEX
+# ----------------------------------------------------
+print("[5/5] Rebuilding Dataset, Chunks & FAISS Index...")
+
+subprocess.run([sys.executable, str(loader_path)], check=True)
+
+corpus_file = ROOT_DIR / "data_prep" / "processed_corpus.json"
+chunks_file = ROOT_DIR / "chunking" / "processed_chunks.json"
+
+with open(corpus_file, "r", encoding="utf-8") as f:
+    corpus_data = json.load(f)
+
+chunks_data = [
+    {
+        "chunk_id": item["id"] + "_c0",
+        "passage_id": item["id"],
+        "query_id": item["query_id"],
+        "language": item["language"],
+        "text": f"[LANG: {item['language'].upper()}] [QID: {item['query_id']}]\n{item['text']}",
+        "raw_text": item["text"],
+        "char_length": len(item["text"]),
+        "is_selected": item["is_selected"],
+        "passage_rank": item["passage_rank"]
+    }
+    for item in corpus_data
+]
+
+with open(chunks_file, "w", encoding="utf-8") as f:
+    json.dump(chunks_data, f, ensure_ascii=False, indent=2)
+
+print(f"Saved {len(chunks_data)} chunks to {chunks_file}")
+
+# Rebuild Vector Store
+subprocess.run([sys.executable, str(vec_path)], check=True)
+
+print("\n==================================================")
+print("✅ ALL 14 INDIC LANGUAGES UPDATED & FAISS REBUILT!")
+print("==================================================")

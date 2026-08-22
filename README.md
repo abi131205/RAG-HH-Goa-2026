@@ -3,6 +3,7 @@
 > **Production-grade Retrieval-Augmented Generation (RAG) pipeline supporting all 14 Indic languages built for #RAGInGoa Hackathon 2026 (https://hhgoa.com/).**
 
 [![Hashtag](https://img.shields.io/badge/Hackathon-%23RAGInGoa-emerald?style=for-the-badge)](#)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-brightgreen?style=for-the-badge)](https://heavy-beans-boil.loca.lt)
 [![Dataset](https://img.shields.io/badge/Dataset-MSMARCO--XI-blue?style=for-the-badge)](https://huggingface.co/datasets/ai4bharat/MSMARCO-XI)
 [![Languages](https://img.shields.io/badge/Languages-14%20Indic-purple?style=for-the-badge)](#)
 [![Latency](https://img.shields.io/badge/P50--Latency-182.95ms-brightgreen?style=for-the-badge)](#)

@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Indic RAG Chatbot | HH Goa 2026</title>
+    <title>Voice Indic RAG Console | HH Goa 2026</title>
     <!-- Google Fonts: Outfit (Display) + Inter (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* HHGOA.COM LUXURY CHATBOT DESIGN SYSTEM */
+        /* HHGOA.COM LUXURY BRAND SYSTEM */
         :root {
-            --bg-deep: #061E14;
-            --bg-card: rgba(12, 45, 32, 0.85);
-            --bg-user-msg: rgba(52, 211, 153, 0.12);
-            --bg-ai-msg: rgba(10, 38, 27, 0.9);
+            --bg-deep: #062016;
+            --bg-card: rgba(12, 45, 32, 0.88);
+            --bg-user-msg: rgba(52, 211, 153, 0.15);
+            --bg-ai-msg: rgba(10, 38, 27, 0.95);
             
-            --border-glass: rgba(52, 211, 153, 0.22);
+            --border-glass: rgba(52, 211, 153, 0.25);
             --border-glass-hover: rgba(52, 211, 153, 0.5);
             
             --mint-neon: #34D399;
@@ -43,10 +43,10 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background-image: radial-gradient(circle at 50% 0%, rgba(52, 211, 153, 0.15), transparent 75%);
+            background-image: radial-gradient(circle at 50% 0%, rgba(52, 211, 153, 0.18), transparent 75%);
         }
 
-        /* Top Bar */
+        /* Top Header */
         .navbar {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
@@ -107,7 +107,7 @@
         .chat-app-container {
             flex: 1;
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 280px 1fr;
             height: calc(100vh - 60px);
             overflow: hidden;
         }
@@ -119,21 +119,13 @@
 
         /* Sidebar Control Center */
         .sidebar {
-            background: rgba(8, 32, 22, 0.95);
+            background: rgba(6, 26, 18, 0.95);
             border-right: 1px solid var(--border-glass);
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 18px;
             overflow-y: auto;
-        }
-
-        .sidebar-title {
-            font-family: var(--font-heading);
-            font-size: 16px;
-            color: var(--mint-neon);
-            font-weight: 800;
-            letter-spacing: 0.5px;
         }
 
         .btn-new-chat {
@@ -142,11 +134,11 @@
             color: var(--mint-neon);
             font-family: var(--font-heading);
             font-weight: 800;
-            font-size: 14px;
+            font-size: 13px;
             padding: 10px;
             border-radius: 10px;
             cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            text-align: center;
             transition: all 0.2s;
         }
         .btn-new-chat:hover { background: var(--mint-neon); color: var(--bg-deep); }
@@ -154,7 +146,7 @@
         .sidebar-section { display: flex; flex-direction: column; gap: 8px; }
         .sidebar-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* 14 Language Pills in Sidebar */
+        /* 14 Language Pills */
         .lang-grid { display: flex; flex-wrap: wrap; gap: 6px; }
         .lang-chip {
             background: rgba(255, 255, 255, 0.05);
@@ -171,7 +163,7 @@
             font-weight: 800;
         }
 
-        /* Strategy Switcher */
+        /* Strategy Buttons */
         .strat-list { display: flex; flex-direction: column; gap: 6px; }
         .strat-btn {
             background: rgba(255, 255, 255, 0.04);
@@ -189,7 +181,7 @@
         /* Guardrail Audit */
         .audit-list { display: flex; flex-direction: column; gap: 8px; }
         .audit-item {
-            background: rgba(6, 26, 18, 0.6);
+            background: rgba(4, 18, 12, 0.6);
             border: 1px solid var(--border-glass);
             padding: 8px 12px; border-radius: 8px;
             display: flex; align-items: center; justify-content: space-between;
@@ -206,16 +198,15 @@
         }
         .preset-btn:hover { background: rgba(52, 211, 153, 0.15); }
 
-        /* Main Chat Workspace */
+        /* Main Workspace */
         .chat-workspace {
             display: flex;
             flex-direction: column;
             height: 100%;
             position: relative;
-            background: rgba(6, 30, 20, 0.6);
+            background: rgba(6, 26, 18, 0.6);
         }
 
-        /* Conversational Feed */
         .chat-feed {
             flex: 1;
             padding: 24px;
@@ -233,10 +224,7 @@
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .chat-message.user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
+        .chat-message.user { align-self: flex-end; flex-direction: row-reverse; }
 
         .chat-avatar {
             width: 38px; height: 38px; border-radius: 50%;
@@ -252,7 +240,7 @@
             border-radius: 16px;
             padding: 16px 20px;
             display: flex; flex-direction: column; gap: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
         }
         .user .chat-bubble-card {
             background: var(--bg-user-msg);
@@ -271,18 +259,15 @@
             border: 1px solid var(--border-glass);
             color: var(--text-silver); font-size: 11px; font-weight: 600;
             padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; gap: 4px;
         }
         .tool-btn:hover { background: rgba(52, 211, 153, 0.15); color: var(--mint-neon); }
 
         .badge-pill { font-size: 10px; font-weight: 800; background: rgba(52, 211, 153, 0.15); color: var(--mint-neon); padding: 3px 8px; border-radius: 4px; }
 
-        /* Expandable Context Accordion */
         .context-accordion {
-            background: rgba(4, 18, 12, 0.7);
+            background: rgba(4, 18, 12, 0.8);
             border: 1px solid var(--border-glass);
-            border-radius: 8px;
-            padding: 10px; margin-top: 6px;
+            border-radius: 8px; padding: 10px; margin-top: 6px;
             display: flex; flex-direction: column; gap: 8px;
         }
         .context-chunk-item { font-size: 12px; border-bottom: 1px dashed var(--border-glass); padding-bottom: 6px; }
@@ -329,6 +314,12 @@
         }
         .mic-bar-btn.recording { animation: pulse 1.2s infinite; background: var(--amber-gold); }
         .mic-bar-svg { width: 22px; height: 22px; stroke: var(--bg-deep); stroke-width: 2.2; fill: none; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.8); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(52, 211, 153, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
 
         .btn-send-mint {
             background: var(--mint-neon);
@@ -391,9 +382,9 @@
         </div>
     </header>
 
-    <!-- App Main Layout -->
+    <!-- App Layout -->
     <div class="chat-app-container">
-        <!-- Sidebar Control Panel -->
+        <!-- Sidebar -->
         <aside class="sidebar">
             <button id="btn-new-chat" class="btn-new-chat">➕ New Chat Thread</button>
 
@@ -456,10 +447,9 @@
             </div>
         </aside>
 
-        <!-- Conversational Chat Stream Workspace -->
+        <!-- Main Conversational Feed Workspace -->
         <main class="chat-workspace">
             <div class="chat-feed" id="chat-feed">
-                <!-- Welcome Initial Message -->
                 <div class="chat-message ai">
                     <div class="chat-avatar">🤖</div>
                     <div class="chat-bubble-card">
@@ -469,7 +459,7 @@
                         </div>
                         <div class="bubble-text">
                             Namaste! Welcome to the <strong>Voice-Enabled Indic RAG Chatbot</strong>. 
-                            <br>Ask any question by speaking into the microphone 🎤 or typing in any of the 14 Indic languages!
+                            <br>Ask any question by speaking into the microphone 🎤 or typing below in any of 14 Indic languages!
                         </div>
                     </div>
                 </div>
@@ -538,6 +528,319 @@
         </div>
     </div>
 
-    <script src="/static/app.js"></script>
+    <!-- Self-Contained JavaScript for 100% Guaranteed Execution -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentLanguage = 'auto';
+            let currentStrategy = 'metadata';
+            let mediaRecorder = null;
+            let audioChunks = [];
+            let isRecording = false;
+
+            const btnRecord = document.getElementById('btn-record');
+            const textInput = document.getElementById('text-query-input');
+            const btnSubmitText = document.getElementById('btn-submit-text');
+            const btnRefuseDemo = document.getElementById('btn-refuse-demo');
+            const btnOpenEval = document.getElementById('btn-open-eval');
+            const btnCloseEval = document.getElementById('btn-close-eval');
+            const btnNewChat = document.getElementById('btn-new-chat');
+            const evalModal = document.getElementById('eval-modal');
+            const chatFeed = document.getElementById('chat-feed');
+
+            // 1. Web Audio API Microphone Recorder
+            if (btnRecord) {
+                btnRecord.addEventListener('click', async () => {
+                    if (!isRecording) {
+                        try {
+                            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                            mediaRecorder = new MediaRecorder(stream);
+                            audioChunks = [];
+
+                            mediaRecorder.ondataavailable = e => {
+                                if (e.data.size > 0) audioChunks.push(e.data);
+                            };
+
+                            mediaRecorder.onstop = async () => {
+                                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                                const reader = new FileReader();
+                                reader.readAsDataURL(audioBlob);
+                                reader.onloadend = async () => {
+                                    const base64Audio = reader.result.split(',')[1];
+                                    try {
+                                        await executeRAGQuery(null, base64Audio);
+                                    } catch (e) {
+                                        console.error("Voice query error:", e);
+                                    }
+                                };
+                                stream.getTracks().forEach(t => t.stop());
+                            };
+
+                            mediaRecorder.start();
+                            isRecording = true;
+                            btnRecord.classList.add('recording');
+                        } catch (err) {
+                            console.error("Mic access error:", err);
+                            await executeRAGQuery();
+                        }
+                    } else {
+                        mediaRecorder.stop();
+                        isRecording = false;
+                        btnRecord.classList.remove('recording');
+                    }
+                });
+            }
+
+            // 2. Language Switcher Pills
+            const langPillsContainer = document.getElementById('lang-pills-container');
+            if (langPillsContainer) {
+                langPillsContainer.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('lang-chip')) {
+                        document.querySelectorAll('.lang-chip').forEach(c => c.classList.remove('active'));
+                        e.target.classList.add('active');
+                        currentLanguage = e.target.dataset.lang;
+                    }
+                });
+            }
+
+            // 3. Strategy Switcher
+            document.querySelectorAll('.strat-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.strat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentStrategy = btn.dataset.strategy;
+                });
+            });
+
+            // 4. Preset Query Chips
+            document.querySelectorAll('.preset-btn').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    textInput.value = chip.dataset.query;
+                    if (chip.dataset.lang) {
+                        currentLanguage = chip.dataset.lang;
+                        document.querySelectorAll('.lang-chip').forEach(c => {
+                            c.classList.toggle('active', c.dataset.lang === currentLanguage);
+                        });
+                    }
+                    executeRAGQuery(textInput.value);
+                });
+            });
+
+            // 5. Refusal Demo
+            if (btnRefuseDemo) {
+                btnRefuseDemo.addEventListener('click', () => {
+                    const offTopicQuery = "Who won the 2026 FIFA World Cup final match?";
+                    textInput.value = offTopicQuery;
+                    executeRAGQuery(offTopicQuery);
+                });
+            }
+
+            // 6. New Chat Thread
+            if (btnNewChat) {
+                btnNewChat.addEventListener('click', () => {
+                    chatFeed.innerHTML = `
+                        <div class="chat-message ai">
+                            <div class="chat-avatar">🤖</div>
+                            <div class="chat-bubble-card">
+                                <div class="bubble-header">
+                                    <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                                    <span>Fresh Session</span>
+                                </div>
+                                <div class="bubble-text">New chat thread initialized. Ask any question in 14 Indic languages!</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // 7. Eval Modal
+            if (btnOpenEval) btnOpenEval.addEventListener('click', () => evalModal.classList.remove('hidden'));
+            if (btnCloseEval) btnCloseEval.addEventListener('click', () => evalModal.classList.add('hidden'));
+
+            // 8. Execute RAG Submit
+            if (btnSubmitText) {
+                btnSubmitText.addEventListener('click', () => executeRAGQuery(textInput.value));
+            }
+            if (textInput) {
+                textInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        executeRAGQuery(textInput.value);
+                    }
+                });
+            }
+
+            async function executeRAGQuery(textQuery = null, audioBase64 = null) {
+                const queryText = textQuery !== null ? textQuery : textInput.value;
+                if (!queryText.trim() && !audioBase64) return;
+
+                // Append User Speech/Text Message to Chat Stream
+                appendUserMessage(queryText || "Voice Input");
+                textInput.value = '';
+
+                // Append Loading Indicator
+                const loadingId = appendLoadingMessage();
+
+                try {
+                    const res = await fetch('/api/query', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            text_query: queryText,
+                            audio_base64: audioBase64,
+                            language_code: currentLanguage,
+                            top_k: 3
+                        })
+                    });
+
+                    const data = await res.json();
+                    removeMessage(loadingId);
+                    appendAIMessage(data);
+                } catch (err) {
+                    console.error(err);
+                    removeMessage(loadingId);
+                    appendErrorMessage();
+                }
+            }
+
+            function appendUserMessage(text) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'chat-message user';
+                msgDiv.innerHTML = `
+                    <div class="chat-avatar">👤</div>
+                    <div class="chat-bubble-card">
+                        <div class="bubble-header">
+                            <span class="bubble-sender">YOU</span>
+                            <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <div class="bubble-text">${escapeHtml(text)}</div>
+                    </div>
+                `;
+                chatFeed.appendChild(msgDiv);
+                chatFeed.scrollTop = chatFeed.scrollHeight;
+            }
+
+            function appendLoadingMessage() {
+                const id = 'loading-' + Date.now();
+                const msgDiv = document.createElement('div');
+                msgDiv.id = id;
+                msgDiv.className = 'chat-message ai';
+                msgDiv.innerHTML = `
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble-card">
+                        <div class="bubble-header">
+                            <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                            <span>Searching FAISS 70k...</span>
+                        </div>
+                        <div class="bubble-text">Retrieving grounded context and generating answer...</div>
+                    </div>
+                `;
+                chatFeed.appendChild(msgDiv);
+                chatFeed.scrollTop = chatFeed.scrollHeight;
+                return id;
+            }
+
+            function removeMessage(id) {
+                const el = document.getElementById(id);
+                if (el) el.remove();
+            }
+
+            function appendAIMessage(data) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'chat-message ai';
+
+                const chunksHtml = (data.retrieved_chunks || []).map(c => `
+                    <div class="context-chunk-item">
+                        <span class="chunk-tag">[LANG: ${c.language.toUpperCase()}] Score: ${c.score.toFixed(4)} (ID: ${c.passage_id})</span>
+                        <div>${escapeHtml(c.raw_text)}</div>
+                    </div>
+                `).join('');
+
+                const accordionId = 'acc-' + Date.now();
+                const isSuccess = data.status === 'SUCCESS';
+                const safeAnswer = (data.answer || '').replace(/'/g, "\\'").replace(/\n/g, " ");
+
+                msgDiv.innerHTML = `
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble-card">
+                        <div class="bubble-header">
+                            <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                            <div>
+                                <span class="badge-pill">${isSuccess ? 'GROUNDED 100%' : 'REFUSED (GUARD)'}</span>
+                                <span class="badge-pill">${data.timing_ms.total_ms || 0}ms</span>
+                            </div>
+                        </div>
+                        <div class="bubble-text">${escapeHtml(data.answer || '')}</div>
+
+                        <div class="bubble-tools">
+                            <button class="tool-btn" onclick="speakText('${safeAnswer}')">🔊 Listen</button>
+                            <button class="tool-btn" onclick="copyText('${safeAnswer}')">📋 Copy</button>
+                            ${data.retrieved_chunks && data.retrieved_chunks.length > 0 ? 
+                                `<button class="tool-btn" onclick="toggleAccordion('${accordionId}')">📚 Sources (${data.retrieved_chunks.length})</button>` : ''}
+                        </div>
+
+                        <div id="${accordionId}" class="context-accordion hidden">
+                            <div style="font-weight: 700; font-size: 11px; color: var(--mint-neon);">RETRIEVED FAISS CONTEXT CHUNKS:</div>
+                            ${chunksHtml}
+                        </div>
+                    </div>
+                `;
+
+                chatFeed.appendChild(msgDiv);
+                chatFeed.scrollTop = chatFeed.scrollHeight;
+
+                const g = data.guardrail || {};
+                const safetyEl = document.getElementById('guard-status-safety');
+                const relEl = document.getElementById('guard-status-relevance');
+                const groundEl = document.getElementById('guard-status-grounding');
+                if (safetyEl) safetyEl.textContent = g.is_safe ? 'PASS' : 'FAIL';
+                if (relEl) relEl.textContent = g.is_relevant ? 'PASS' : 'REJECT';
+                if (groundEl) groundEl.textContent = g.is_grounded ? 'PASS' : 'FAIL';
+            }
+
+            function appendErrorMessage() {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'chat-message ai';
+                msgDiv.innerHTML = `
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble-card">
+                        <div class="bubble-header">
+                            <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                            <span style="color: var(--amber-gold)">ERROR</span>
+                        </div>
+                        <div class="bubble-text">Pipeline execution failed. Please check network or try again.</div>
+                    </div>
+                `;
+                chatFeed.appendChild(msgDiv);
+                chatFeed.scrollTop = chatFeed.scrollHeight;
+            }
+        });
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.innerText = text;
+            return div.innerHTML;
+        }
+
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden');
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert('Answer copied to clipboard!');
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Text-to-speech not supported in this browser.');
+            }
+        }
+    </script>
 </body>
 </html>

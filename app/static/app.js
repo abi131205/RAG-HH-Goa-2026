@@ -35,8 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         reader.onloadend = async () => {
                             const base64Audio = reader.result.split(',')[1];
                             recordingStatus.textContent = 'Transcribing voice & executing RAG...';
-                            await executeRAGQuery(null, base64Audio);
-                            recordingStatus.textContent = 'Click Microphone to Speak';
+                            try {
+                                await executeRAGQuery(null, base64Audio);
+                            } catch (e) {
+                                console.error("Voice query failed:", e);
+                            } finally {
+                                recordingStatus.textContent = 'Click Microphone to Speak';
+                            }
                         };
                         stream.getTracks().forEach(t => t.stop());
                     };

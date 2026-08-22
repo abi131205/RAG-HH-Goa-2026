@@ -1,6 +1,11 @@
 # Voice-Enabled Indic RAG System (ai4bharat/MSMARCO-XI)
 
-> **Production-grade Retrieval-Augmented Generation (RAG) pipeline supporting all 14 Indic languages with custom chunking, FAISS vector search, structured harness orchestration, multi-stage guardrails, latency instrumentation, and a web UI.**
+> **Production-grade Retrieval-Augmented Generation (RAG) pipeline supporting all 14 Indic languages built for #RAGInGoa Hackathon 2026 (https://hhgoa.com/).**
+
+[![Hashtag](https://img.shields.io/badge/Hackathon-%23RAGInGoa-emerald?style=for-the-badge)](#)
+[![Dataset](https://img.shields.io/badge/Dataset-MSMARCO--XI-blue?style=for-the-badge)](https://huggingface.co/datasets/ai4bharat/MSMARCO-XI)
+[![Languages](https://img.shields.io/badge/Languages-14%20Indic-purple?style=for-the-badge)](#)
+[![Latency](https://img.shields.io/badge/P50--Latency-182.95ms-brightgreen?style=for-the-badge)](#)
 
 ---
 

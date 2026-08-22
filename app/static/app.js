@@ -7,13 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let isRecording = false;
 
     const btnRecord = document.getElementById('btn-record');
-    const recordingStatus = document.getElementById('recording-status');
     const textInput = document.getElementById('text-query-input');
     const btnSubmitText = document.getElementById('btn-submit-text');
     const btnRefuseDemo = document.getElementById('btn-refuse-demo');
     const btnOpenEval = document.getElementById('btn-open-eval');
     const btnCloseEval = document.getElementById('btn-close-eval');
+    const btnNewChat = document.getElementById('btn-new-chat');
     const evalModal = document.getElementById('eval-modal');
+    const chatFeed = document.getElementById('chat-feed');
 
     // 1. Web Audio API Microphone Recorder
     if (btnRecord) {
@@ -34,13 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         reader.readAsDataURL(audioBlob);
                         reader.onloadend = async () => {
                             const base64Audio = reader.result.split(',')[1];
-                            recordingStatus.textContent = 'Transcribing voice & executing RAG...';
                             try {
                                 await executeRAGQuery(null, base64Audio);
                             } catch (e) {
-                                console.error("Voice query failed:", e);
-                            } finally {
-                                recordingStatus.textContent = 'Click Microphone to Speak';
+                                console.error("Voice query error:", e);
                             }
                         };
                         stream.getTracks().forEach(t => t.stop());
@@ -49,17 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     mediaRecorder.start();
                     isRecording = true;
                     btnRecord.classList.add('recording');
-                    recordingStatus.textContent = 'LISTENING... CLICK AGAIN TO STOP';
                 } catch (err) {
                     console.error("Mic access error:", err);
-                    recordingStatus.textContent = 'Voice input fallback activated.';
                     await executeRAGQuery();
                 }
             } else {
                 mediaRecorder.stop();
                 isRecording = false;
                 btnRecord.classList.remove('recording');
-                recordingStatus.textContent = 'PROCESSING AUDIO...';
             }
         });
     }
@@ -76,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Strategy Buttons
+    // 3. Strategy Switcher
     document.querySelectorAll('.strat-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.strat-btn').forEach(b => b.classList.remove('active'));
@@ -108,7 +103,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 6. Eval Modal
+    // 6. New Chat Thread
+    if (btnNewChat) {
+        btnNewChat.addEventListener('click', () => {
+            chatFeed.innerHTML = `
+                <div class="chat-message ai">
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble-card">
+                        <div class="bubble-header">
+                            <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                            <span>Fresh Session</span>
+                        </div>
+                        <div class="bubble-text">New chat thread initialized. Ask any question in 14 Indic languages!</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // 7. Eval Modal
     if (btnOpenEval) btnOpenEval.addEventListener('click', () => evalModal.classList.remove('hidden'));
     if (btnCloseEval) btnCloseEval.addEventListener('click', () => evalModal.classList.add('hidden'));
 
@@ -119,9 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function executeRAGQuery(textQuery = null, audioBase64 = null) {
         const queryText = textQuery || textInput.value;
+        if (!queryText.trim() && !audioBase64) return;
 
-        document.getElementById('badge-status').textContent = 'EXECUTING...';
-        document.getElementById('answer-text').textContent = 'Generating grounded answer...';
+        // Append User Speech/Text Message to Chat Stream
+        appendUserMessage(queryText || "Voice Input");
+        textInput.value = '';
+
+        // Append Loading Indicator
+        const loadingId = appendLoadingMessage();
 
         try {
             const res = await fetch('/api/query', {
@@ -136,58 +154,142 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await res.json();
-            renderResults(data);
+            removeMessage(loadingId);
+            appendAIMessage(data);
         } catch (err) {
             console.error(err);
-            document.getElementById('badge-status').textContent = 'ERROR';
+            removeMessage(loadingId);
+            appendErrorMessage();
         }
     }
 
-    function renderResults(data) {
-        document.getElementById('badge-status').textContent = data.status === 'SUCCESS' ? 'PASS' : 'REJECTED';
-        document.getElementById('badge-status').className = data.status === 'SUCCESS' ? 'badge-mint' : 'audit-badge';
+    function appendUserMessage(text) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message user';
+        msgDiv.innerHTML = `
+            <div class="chat-avatar">👤</div>
+            <div class="chat-bubble-card">
+                <div class="bubble-header">
+                    <span class="bubble-sender">YOU</span>
+                    <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                </div>
+                <div class="bubble-text">${text}</div>
+            </div>
+        `;
+        chatFeed.appendChild(msgDiv);
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+    }
 
-        document.getElementById('badge-total-ms').textContent = `${data.timing_ms.total_ms || 0} ms`;
-        document.getElementById('transcribed-text').textContent = data.transcript || data.text_query || "Voice input transcribed.";
-        document.getElementById('answer-text').textContent = data.answer;
+    function appendLoadingMessage() {
+        const id = 'loading-' + Date.now();
+        const msgDiv = document.createElement('div');
+        msgDiv.id = id;
+        msgDiv.className = 'chat-message ai';
+        msgDiv.innerHTML = `
+            <div class="chat-avatar">🤖</div>
+            <div class="chat-bubble-card">
+                <div class="bubble-header">
+                    <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                    <span>Searching FAISS 70k...</span>
+                </div>
+                <div class="bubble-text">Retrieving grounded context and generating answer...</div>
+            </div>
+        `;
+        chatFeed.appendChild(msgDiv);
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+        return id;
+    }
 
-        const maxTime = Math.max(data.timing_ms.total_ms || 1, 100);
-        document.getElementById('bar-stt').style.width = `${((data.timing_ms.stt_ms || 0) / maxTime) * 100}%`;
-        document.getElementById('time-stt').textContent = `${data.timing_ms.stt_ms || 0}ms`;
+    function removeMessage(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
 
-        document.getElementById('bar-retrieval').style.width = `${((data.timing_ms.retrieval_ms || 0) / maxTime) * 100}%`;
-        document.getElementById('time-retrieval').textContent = `${data.timing_ms.retrieval_ms || 0}ms`;
+    function appendAIMessage(data) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message ai';
 
-        document.getElementById('bar-guardrail').style.width = `${((data.timing_ms.guardrail_ms || 0) / maxTime) * 100}%`;
-        document.getElementById('time-guardrail').textContent = `${data.timing_ms.guardrail_ms || 0}ms`;
+        const chunksHtml = (data.retrieved_chunks || []).map(c => `
+            <div class="context-chunk-item">
+                <span class="chunk-tag">[LANG: ${c.language.toUpperCase()}] Score: ${c.score.toFixed(4)} (ID: ${c.passage_id})</span>
+                <div>${c.raw_text}</div>
+            </div>
+        `).join('');
 
-        document.getElementById('bar-llm').style.width = `${((data.timing_ms.llm_ms || 0) / maxTime) * 100}%`;
-        document.getElementById('time-llm').textContent = `${data.timing_ms.llm_ms || 0}ms`;
+        const accordionId = 'acc-' + Date.now();
+        const isSuccess = data.status === 'SUCCESS';
 
+        msgDiv.innerHTML = `
+            <div class="chat-avatar">🤖</div>
+            <div class="chat-bubble-card">
+                <div class="bubble-header">
+                    <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                    <div>
+                        <span class="badge-pill">${isSuccess ? 'GROUNDED 100%' : 'REFUSED (GUARD)'}</span>
+                        <span class="badge-pill">${data.timing_ms.total_ms || 0}ms</span>
+                    </div>
+                </div>
+                <div class="bubble-text">${data.answer}</div>
+
+                <div class="bubble-tools">
+                    <button class="tool-btn" onclick="speakText('${data.answer.replace(/'/g, "\\'")}')">🔊 Listen</button>
+                    <button class="tool-btn" onclick="copyText('${data.answer.replace(/'/g, "\\'")}')">📋 Copy</button>
+                    ${data.retrieved_chunks && data.retrieved_chunks.length > 0 ? 
+                        `<button class="tool-btn" onclick="toggleAccordion('${accordionId}')">📚 Sources (${data.retrieved_chunks.length})</button>` : ''}
+                </div>
+
+                <div id="${accordionId}" class="context-accordion hidden">
+                    <div style="font-weight: 700; font-size: 11px; color: var(--mint-neon);">RETRIEVED FAISS CONTEXT CHUNKS:</div>
+                    ${chunksHtml}
+                </div>
+            </div>
+        `;
+
+        chatFeed.appendChild(msgDiv);
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+
+        // Update Guardrail Status Cards
         const g = data.guardrail || {};
         document.getElementById('guard-status-safety').textContent = g.is_safe ? 'PASS' : 'FAIL';
         document.getElementById('guard-status-relevance').textContent = g.is_relevant ? 'PASS' : 'REJECT';
         document.getElementById('guard-status-grounding').textContent = g.is_grounded ? 'PASS' : 'FAIL';
+    }
 
-        const chunksContainer = document.getElementById('chunks-container');
-        chunksContainer.innerHTML = '';
-
-        if (!data.retrieved_chunks || data.retrieved_chunks.length === 0) {
-            chunksContainer.innerHTML = '<div style="font-size: 13px; color: var(--text-muted);">No context passages retrieved.</div>';
-            return;
-        }
-
-        data.retrieved_chunks.forEach(c => {
-            const card = document.createElement('div');
-            card.className = 'chunk-card';
-            card.innerHTML = `
-                <div class="chunk-meta">
-                    <span>[LANG: ${c.language.toUpperCase()}] Score: ${c.score.toFixed(4)}</span>
-                    <span>Passage: ${c.passage_id}</span>
+    function appendErrorMessage() {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message ai';
+        msgDiv.innerHTML = `
+            <div class="chat-avatar">🤖</div>
+            <div class="chat-bubble-card">
+                <div class="bubble-header">
+                    <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                    <span style="color: var(--amber-gold)">ERROR</span>
                 </div>
-                <div class="chunk-body">${c.raw_text}</div>
-            `;
-            chunksContainer.appendChild(card);
-        });
+                <div class="bubble-text">Pipeline execution failed. Please check network or try again.</div>
+            </div>
+        `;
+        chatFeed.appendChild(msgDiv);
+        chatFeed.scrollTop = chatFeed.scrollHeight;
     }
 });
+
+// Helper Functions for Buttons
+function toggleAccordion(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden');
+}
+
+function copyText(text) {
+    navigator.clipboard.writeText(text);
+    alert('Answer copied to clipboard!');
+}
+
+function speakText(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+    } else {
+        alert('Text-to-speech not supported in this browser.');
+    }
+}

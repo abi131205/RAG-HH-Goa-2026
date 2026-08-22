@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Indic RAG Console | HH Goa 2026</title>
+    <title>Voice Indic RAG Chatbot | HH Goa 2026</title>
     <!-- Google Fonts: Outfit (Display) + Inter (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* HHGOA.COM LUXURY BRAND DESIGN SYSTEM */
+        /* HHGOA.COM LUXURY CHATBOT DESIGN SYSTEM */
         :root {
-            --bg-deep: #062419;
-            --bg-card: rgba(12, 48, 34, 0.85);
-            --border-card: rgba(52, 211, 153, 0.25);
-            --border-card-hover: rgba(52, 211, 153, 0.5);
+            --bg-deep: #061E14;
+            --bg-card: rgba(12, 45, 32, 0.85);
+            --bg-user-msg: rgba(52, 211, 153, 0.12);
+            --bg-ai-msg: rgba(10, 38, 27, 0.9);
+            
+            --border-glass: rgba(52, 211, 153, 0.22);
+            --border-glass-hover: rgba(52, 211, 153, 0.5);
             
             --mint-neon: #34D399;
             --mint-dark: #059669;
@@ -36,31 +39,23 @@
             background-color: var(--bg-deep);
             color: var(--text-white);
             font-family: var(--font-body);
-            min-height: 100vh;
-            padding: 20px;
-            background-image: radial-gradient(circle at 50% 0%, rgba(52, 211, 153, 0.18), transparent 75%);
-            background-attachment: fixed;
-        }
-
-        .app-layout {
-            max-width: 1400px;
-            margin: 0 auto;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            overflow: hidden;
+            background-image: radial-gradient(circle at 50% 0%, rgba(52, 211, 153, 0.15), transparent 75%);
         }
 
-        /* Top Header Navbar */
+        /* Top Bar */
         .navbar {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--border-card);
-            border-radius: 16px;
-            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-glass);
+            padding: 12px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10;
         }
 
         .brand-box { display: flex; align-items: center; gap: 12px; }
@@ -76,26 +71,24 @@
         }
         .brand-title {
             font-family: var(--font-heading);
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 800;
-            letter-spacing: 0.5px;
             color: var(--text-white);
         }
 
-        .nav-meta { display: flex; gap: 24px; }
+        .nav-meta { display: flex; gap: 20px; }
         .meta-item { display: flex; flex-direction: column; }
-        .meta-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-        .meta-value { font-size: 13px; color: var(--mint-neon); font-weight: 700; }
+        .meta-label { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        .meta-value { font-size: 12px; color: var(--mint-neon); font-weight: 700; }
+        .status-dot { color: #4ADE80; font-size: 12px; font-weight: 700; }
 
-        .status-dot { color: #4ADE80; font-size: 13px; font-weight: 700; }
-
-        .nav-actions { display: flex; gap: 12px; }
+        .nav-actions { display: flex; gap: 10px; }
         .btn-amber {
             background: transparent;
             border: 1px solid var(--amber-gold);
             color: var(--amber-gold);
-            font-size: 12px; font-weight: 700;
-            padding: 8px 16px; border-radius: 8px;
+            font-size: 11px; font-weight: 700;
+            padding: 6px 14px; border-radius: 8px;
             cursor: pointer; transition: all 0.2s;
         }
         .btn-amber:hover { background: rgba(245, 158, 11, 0.2); }
@@ -104,30 +97,72 @@
             background: var(--mint-neon);
             color: var(--bg-deep);
             font-family: var(--font-heading);
-            font-size: 13px; font-weight: 800;
-            padding: 8px 18px; border-radius: 8px;
+            font-size: 12px; font-weight: 800;
+            padding: 6px 16px; border-radius: 8px;
             border: none; cursor: pointer; transition: all 0.2s;
         }
         .btn-mint:hover { background: #6EE7B7; }
 
-        /* 14 Language Pill Switcher */
-        .lang-bar {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: 14px;
-            padding: 12px 20px;
-            display: flex; align-items: center; gap: 16px;
+        /* App Container */
+        .chat-app-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: calc(100vh - 60px);
+            overflow: hidden;
         }
-        .lang-title { font-family: var(--font-heading); font-size: 15px; color: var(--mint-neon); font-weight: 700; }
 
-        .lang-pills-list { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+        @media (max-width: 900px) {
+            .chat-app-container { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+        }
+
+        /* Sidebar Control Center */
+        .sidebar {
+            background: rgba(8, 32, 22, 0.95);
+            border-right: 1px solid var(--border-glass);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            font-family: var(--font-heading);
+            font-size: 16px;
+            color: var(--mint-neon);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-new-chat {
+            background: rgba(52, 211, 153, 0.15);
+            border: 1px solid var(--mint-neon);
+            color: var(--mint-neon);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-new-chat:hover { background: var(--mint-neon); color: var(--bg-deep); }
+
+        .sidebar-section { display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* 14 Language Pills in Sidebar */
+        .lang-grid { display: flex; flex-wrap: wrap; gap: 6px; }
         .lang-chip {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--border-card);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
             color: var(--text-silver);
-            font-size: 12px; font-weight: 600;
-            padding: 6px 14px; border-radius: 20px;
-            white-space: nowrap; cursor: pointer; transition: all 0.2s;
+            font-size: 11px; font-weight: 600;
+            padding: 5px 10px; border-radius: 6px;
+            cursor: pointer; transition: all 0.2s;
         }
         .lang-chip.active {
             background: var(--mint-neon);
@@ -136,154 +171,174 @@
             font-weight: 800;
         }
 
-        /* Spacious 2-Column Grid Layout */
-        .grid-main {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .grid-main { grid-template-columns: 1fr; }
-        }
-
-        .card {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-card);
-            border-radius: 16px;
-            padding: 24px;
-            display: flex; flex-direction: column; gap: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        }
-
-        .card-header {
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border-card); padding-bottom: 12px;
-        }
-        .card-title { font-family: var(--font-heading); font-size: 18px; color: var(--text-white); font-weight: 800; }
-
-        .badge-mint { background: var(--mint-neon); color: var(--bg-deep); font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 4px; }
-
-        /* Timing List */
-        .timing-list { display: flex; flex-direction: column; gap: 14px; }
-        .timing-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .timing-label { font-size: 12px; color: var(--text-silver); width: 90px; }
-        .timing-bar-bg { flex: 1; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; }
-        .timing-bar-fill { height: 100%; transition: width 0.3s ease; }
-        .fill-stt { background: #3B82F6; }
-        .fill-faiss { background: var(--mint-neon); }
-        .fill-guard { background: var(--amber-gold); }
-        .fill-llm { background: #EC4899; }
-        .timing-val { font-size: 12px; font-family: var(--font-mono); font-weight: 700; width: 45px; text-align: right; }
-
-        .sub-title { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; }
-
-        .strat-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+        /* Strategy Switcher */
+        .strat-list { display: flex; flex-direction: column; gap: 6px; }
         .strat-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-card);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
             color: var(--text-silver);
-            font-size: 12px; padding: 10px 14px; border-radius: 8px;
+            font-size: 11px; padding: 8px 12px; border-radius: 8px;
             cursor: pointer; text-align: left; transition: all 0.2s;
         }
         .strat-btn.active {
             background: rgba(52, 211, 153, 0.2);
             border-color: var(--mint-neon);
-            color: var(--mint-neon); font-weight: 800;
+            color: var(--mint-neon); font-weight: 700;
         }
 
-        /* Guardrail Audit in Sidebar */
-        .audit-list { display: flex; flex-direction: column; gap: 10px; }
+        /* Guardrail Audit */
+        .audit-list { display: flex; flex-direction: column; gap: 8px; }
         .audit-item {
-            background: rgba(7, 31, 21, 0.6);
-            border: 1px solid var(--border-card);
-            padding: 10px 14px; border-radius: 10px;
+            background: rgba(6, 26, 18, 0.6);
+            border: 1px solid var(--border-glass);
+            padding: 8px 12px; border-radius: 8px;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .audit-info { display: flex; flex-direction: column; }
-        .audit-title { font-size: 12px; font-weight: 700; }
-        .audit-badge { font-size: 10px; font-weight: 800; padding: 3px 6px; border-radius: 4px; background: rgba(16, 185, 129, 0.2); color: #34D399; }
+        .audit-name { font-size: 11px; font-weight: 600; }
+        .audit-badge { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; background: rgba(16, 185, 129, 0.2); color: #34D399; }
 
-        .presets-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+        .preset-grid { display: flex; flex-wrap: wrap; gap: 6px; }
         .preset-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-card);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
             color: var(--mint-neon); font-size: 11px; font-weight: 600;
-            padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+            padding: 6px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
         }
         .preset-btn:hover { background: rgba(52, 211, 153, 0.15); }
 
-        /* Center Stage */
-        .center-card { padding: 28px; display: flex; flex-direction: column; gap: 24px; }
-
-        /* Voice Hero */
-        .voice-box {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 30px; border: 1px dashed var(--border-card); border-radius: 16px;
-            background: rgba(7, 31, 21, 0.5);
+        /* Main Chat Workspace */
+        .chat-workspace {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            background: rgba(6, 30, 20, 0.6);
         }
 
-        .orb-button {
-            width: 88px; height: 88px; border-radius: 50%;
-            background: radial-gradient(circle, var(--mint-neon) 0%, var(--mint-dark) 100%);
+        /* Conversational Feed */
+        .chat-feed {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 14px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .chat-message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 35px rgba(52, 211, 153, 0.5);
-            border: none; cursor: pointer; transition: all 0.3s;
+            font-size: 16px; font-weight: 800; flex-shrink: 0;
         }
-        .orb-button:hover { transform: scale(1.05); }
+        .user .chat-avatar { background: var(--mint-neon); color: var(--bg-deep); }
+        .ai .chat-avatar { background: rgba(52, 211, 153, 0.2); border: 1px solid var(--mint-neon); color: var(--mint-neon); }
 
-        .mic-icon { width: 42px; height: 42px; stroke: var(--bg-deep); stroke-width: 2.2; fill: none; }
-        .voice-hint { font-size: 13px; font-weight: 700; color: var(--mint-neon); margin-top: 14px; }
-
-        .orb-button.recording { animation: pulse 1.2s infinite; }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.8); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 25px rgba(52, 211, 153, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        .chat-bubble-card {
+            background: var(--bg-ai-msg);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex; flex-direction: column; gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
-
-        /* Displays */
-        .display-block { display: flex; flex-direction: column; gap: 8px; }
-        .display-box {
-            background: rgba(7, 31, 21, 0.8);
-            border: 1px solid var(--border-card);
-            padding: 18px 22px; border-radius: 14px; font-size: 15px; line-height: 1.6;
+        .user .chat-bubble-card {
+            background: var(--bg-user-msg);
+            border-color: rgba(52, 211, 153, 0.3);
         }
 
-        .answer-header { display: flex; justify-content: space-between; align-items: center; }
-        .pill-tags { display: flex; gap: 8px; }
-        .pill-tag { font-size: 10px; font-weight: 800; background: rgba(52, 211, 153, 0.15); color: var(--mint-neon); padding: 4px 10px; border-radius: 6px; }
+        .bubble-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); }
+        .bubble-sender { font-weight: 800; color: var(--mint-neon); font-family: var(--font-heading); font-size: 13px; }
+        .user .bubble-sender { color: var(--text-white); }
 
-        .chunks-box { display: flex; flex-direction: column; gap: 12px; max-height: 240px; overflow-y: auto; }
-        .chunk-card {
-            background: rgba(7, 31, 21, 0.9);
-            border: 1px solid var(--border-card);
-            padding: 14px 18px; border-radius: 10px; font-size: 13px;
+        .bubble-text { font-size: 15px; line-height: 1.6; color: var(--text-white); }
+
+        .bubble-tools { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+        .tool-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-silver); font-size: 11px; font-weight: 600;
+            padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 4px;
         }
-        .chunk-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--mint-neon); font-weight: 700; margin-bottom: 6px; }
+        .tool-btn:hover { background: rgba(52, 211, 153, 0.15); color: var(--mint-neon); }
 
-        /* Bottom Floating Bar */
-        .footer-bar {
-            background: var(--bg-card);
+        .badge-pill { font-size: 10px; font-weight: 800; background: rgba(52, 211, 153, 0.15); color: var(--mint-neon); padding: 3px 8px; border-radius: 4px; }
+
+        /* Expandable Context Accordion */
+        .context-accordion {
+            background: rgba(4, 18, 12, 0.7);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 10px; margin-top: 6px;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .context-chunk-item { font-size: 12px; border-bottom: 1px dashed var(--border-glass); padding-bottom: 6px; }
+        .context-chunk-item:last-child { border-bottom: none; }
+        .chunk-tag { color: var(--mint-neon); font-weight: 700; font-size: 10px; }
+
+        /* Floating Input Bar */
+        .chat-input-bar {
+            padding: 16px 24px;
+            background: rgba(6, 26, 18, 0.95);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--border-card-hover);
-            border-radius: 16px; padding: 14px 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border-top: 1px solid var(--border-glass);
         }
-        .input-row { display: flex; gap: 14px; align-items: center; }
-        .input-row input {
-            flex: 1; background: rgba(7, 31, 21, 0.9); border: 1px solid var(--border-card);
-            color: #FFF; padding: 14px 20px; border-radius: 12px; font-size: 15px; outline: none;
-        }
-        .input-row input:focus { border-color: var(--mint-neon); }
 
-        .btn-execute {
-            background: var(--mint-neon); color: var(--bg-deep);
-            font-family: var(--font-heading); font-size: 15px; font-weight: 900;
-            padding: 14px 28px; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s;
+        .input-bar-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(10, 42, 28, 0.9);
+            border: 1px solid var(--border-glass-hover);
+            padding: 8px 12px 8px 16px;
+            border-radius: 28px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .btn-execute:hover { background: #6EE7B7; }
+
+        .input-bar-inner input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #FFF;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .mic-bar-btn {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: var(--mint-neon); color: var(--bg-deep);
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);
+        }
+        .mic-bar-btn.recording { animation: pulse 1.2s infinite; background: var(--amber-gold); }
+        .mic-bar-svg { width: 22px; height: 22px; stroke: var(--bg-deep); stroke-width: 2.2; fill: none; }
+
+        .btn-send-mint {
+            background: var(--mint-neon);
+            color: var(--bg-deep);
+            font-family: var(--font-heading);
+            font-size: 14px; font-weight: 900;
+            padding: 10px 22px; border: none; border-radius: 20px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-send-mint:hover { background: #6EE7B7; }
 
         /* Modal */
         .modal-overlay {
@@ -301,191 +356,140 @@
         .modal-header h2 { font-family: var(--font-heading); color: var(--mint-neon); font-size: 24px; font-weight: 800; }
         .close-btn { background: none; border: none; color: #FFF; font-size: 28px; cursor: pointer; }
         .table-eval { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .table-eval th, .table-eval td { padding: 12px; border: 1px solid var(--border-card); text-align: left; }
+        .table-eval th, .table-eval td { padding: 12px; border: 1px solid var(--border-glass); text-align: left; }
         .table-eval th { background: rgba(14, 46, 32, 0.9); color: var(--mint-neon); font-weight: 700; }
         .mint-text { color: var(--mint-neon); font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <div class="app-layout">
-        <!-- Header -->
-        <header class="navbar">
-            <div class="brand-box">
-                <span class="brand-badge">HH GOA 2026</span>
-                <h1 class="brand-title">VOICE INDIC RAG</h1>
-            </div>
+    <!-- Header Navbar -->
+    <header class="navbar">
+        <div class="brand-box">
+            <span class="brand-badge">HH GOA 2026</span>
+            <h1 class="brand-title">VOICE INDIC RAG CHATBOT</h1>
+        </div>
 
-            <div class="nav-meta">
-                <div class="meta-item">
-                    <span class="meta-label">DATASET</span>
-                    <span class="meta-value">ai4bharat/MSMARCO-XI</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">STT ENGINE</span>
-                    <span class="meta-value">Sarvam saarika:v1</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">GUARDRAILS</span>
-                    <span class="status-dot">● ALL SYSTEMS OPERATIONAL</span>
-                </div>
+        <div class="nav-meta">
+            <div class="meta-item">
+                <span class="meta-label">DATASET</span>
+                <span class="meta-value">ai4bharat/MSMARCO-XI</span>
             </div>
-
-            <div class="nav-actions">
-                <button id="btn-refuse-demo" class="btn-amber">🚨 Refusal Test</button>
-                <button id="btn-open-eval" class="btn-mint">📊 Eval Metrics</button>
+            <div class="meta-item">
+                <span class="meta-label">STT ENGINE</span>
+                <span class="meta-value">Sarvam saarika:v1</span>
             </div>
-        </header>
-
-        <!-- 14 Indic Languages Pill Switcher -->
-        <div class="lang-bar">
-            <span class="lang-title">14 INDIC LANGUAGES:</span>
-            <div class="lang-pills-list" id="lang-pills-container">
-                <button class="lang-chip active" data-lang="auto">✨ Auto Detect</button>
-                <button class="lang-chip" data-lang="hi">HI हिन्दी</button>
-                <button class="lang-chip" data-lang="ta">TA தமிழ்</button>
-                <button class="lang-chip" data-lang="te">TE తెలుగు</button>
-                <button class="lang-chip" data-lang="bn">BN বাংলা</button>
-                <button class="lang-chip" data-lang="mr">MR मराठी</button>
-                <button class="lang-chip" data-lang="gu">GU ગુજરાતી</button>
-                <button class="lang-chip" data-lang="kn">KN ಕನ್ನಡ</button>
-                <button class="lang-chip" data-lang="ml">ML മലയാളം</button>
-                <button class="lang-chip" data-lang="pa">PA ਪੰਜਾਬੀ</button>
-                <button class="lang-chip" data-lang="as">AS অসমীয়া</button>
-                <button class="lang-chip" data-lang="or">OR ଓଡ଼ିଆ</button>
-                <button class="lang-chip" data-lang="ne">NE नेपाली</button>
-                <button class="lang-chip" data-lang="sa">SA संस्कृतम्</button>
-                <button class="lang-chip" data-lang="ur">UR اردو</button>
+            <div class="meta-item">
+                <span class="meta-label">STATUS</span>
+                <span class="status-dot">● ALL OPERATIONAL</span>
             </div>
         </div>
 
-        <!-- Main Grid Layout -->
-        <div class="grid-main">
-            <!-- Left Sidebar Card -->
-            <aside class="card">
-                <div class="card-header">
-                    <h3 class="card-title">PIPELINE LATENCY</h3>
-                    <span class="badge-mint" id="badge-total-ms">0 ms</span>
-                </div>
-
-                <div class="timing-list">
-                    <div class="timing-row">
-                        <span class="timing-label">STT (Sarvam)</span>
-                        <div class="timing-bar-bg"><div id="bar-stt" class="timing-bar-fill fill-stt" style="width:0%"></div></div>
-                        <span id="time-stt" class="timing-val">0ms</span>
-                    </div>
-                    <div class="timing-row">
-                        <span class="timing-label">FAISS Search</span>
-                        <div class="timing-bar-bg"><div id="bar-retrieval" class="timing-bar-fill fill-faiss" style="width:0%"></div></div>
-                        <span id="time-retrieval" class="timing-val">0ms</span>
-                    </div>
-                    <div class="timing-row">
-                        <span class="timing-label">Guardrails</span>
-                        <div class="timing-bar-bg"><div id="bar-guardrail" class="timing-bar-fill fill-guard" style="width:0%"></div></div>
-                        <span id="time-guardrail" class="timing-val">0ms</span>
-                    </div>
-                    <div class="timing-row">
-                        <span class="timing-label">LLM (Gemini)</span>
-                        <div class="timing-bar-bg"><div id="bar-llm" class="timing-bar-fill fill-llm" style="width:0%"></div></div>
-                        <span id="time-llm" class="timing-val">0ms</span>
-                    </div>
-                </div>
-
-                <div>
-                    <span class="sub-title">CHUNKING STRATEGY:</span>
-                    <div class="strat-buttons">
-                        <button class="strat-btn" data-strategy="fixed">Fixed-Size (80w)</button>
-                        <button class="strat-btn" data-strategy="semantic">Pure Semantic</button>
-                        <button class="strat-btn active" data-strategy="metadata">Metadata-Aware ★</button>
-                    </div>
-                </div>
-
-                <div>
-                    <span class="sub-title">GUARDRAIL AUDIT:</span>
-                    <div class="audit-list">
-                        <div class="audit-item">
-                            <div class="audit-info">
-                                <span class="audit-title">🛡️ Input Safety</span>
-                            </div>
-                            <span id="guard-status-safety" class="audit-badge">PASS</span>
-                        </div>
-                        <div class="audit-item">
-                            <div class="audit-info">
-                                <span class="audit-title">🎯 Relevance Score</span>
-                            </div>
-                            <span id="guard-status-relevance" class="audit-badge">PASS</span>
-                        </div>
-                        <div class="audit-item">
-                            <div class="audit-info">
-                                <span class="audit-title">🔗 Grounding</span>
-                            </div>
-                            <span id="guard-status-grounding" class="audit-badge">PASS</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <span class="sub-title">SAMPLE PRESET QUERIES:</span>
-                    <div class="presets-group">
-                        <button class="preset-btn" data-query="தலைநகரம்" data-lang="ta">TA: தலைநகரம்</button>
-                        <button class="preset-btn" data-query="पीरियड 3 तत्व" data-lang="hi">HI: पीरियड 3 तत्व</button>
-                        <button class="preset-btn" data-query="భారతదేశ రాజధాని" data-lang="te">TE: భారతదేశ రాజధాని</button>
-                        <button class="preset-btn" data-query="সুন্দরবন বিখ্যাত" data-lang="bn">BN: সুন্দরবন বিখ্যাত</button>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Center Stage (Spacious Workspace) -->
-            <main class="card center-card">
-                <!-- Voice Orb Visualizer -->
-                <div class="voice-box">
-                    <div id="orb-visualizer">
-                        <button id="btn-record" class="orb-button" title="Click to speak">
-                            <svg class="mic-icon" viewBox="0 0 24 24">
-                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                                <line x1="12" y1="19" x2="12" y2="22"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <span id="recording-status" class="voice-hint">Click Microphone to Speak</span>
-                </div>
-
-                <!-- Live Transcription -->
-                <div class="display-block">
-                    <span class="sub-title">LIVE TRANSCRIPTION</span>
-                    <div id="transcribed-text" class="display-box">Ask a question using voice or text below...</div>
-                </div>
-
-                <!-- Grounded Answer -->
-                <div class="display-block">
-                    <div class="answer-header">
-                        <span class="sub-title" style="color: var(--mint-neon)">GROUNDED RESPONSE</span>
-                        <div class="pill-tags">
-                            <span class="pill-tag">GROUNDING 100%</span>
-                            <span class="pill-tag">SAFETY SAFE</span>
-                        </div>
-                    </div>
-                    <div id="answer-text" class="display-box" style="border-left: 4px solid var(--mint-neon);">Your grounded RAG answer will appear here.</div>
-                </div>
-
-                <!-- Context Chunks -->
-                <div class="display-block">
-                    <span class="sub-title">TOP RETRIEVED SOURCES (FAISS 70K):</span>
-                    <div id="chunks-container" class="chunks-box">
-                        <div style="font-size: 13px; color: var(--text-muted);">Retrieved passages with citations will be rendered here.</div>
-                    </div>
-                </div>
-            </main>
+        <div class="nav-actions">
+            <button id="btn-refuse-demo" class="btn-amber">🚨 Refusal Test</button>
+            <button id="btn-open-eval" class="btn-mint">📊 Eval Metrics</button>
         </div>
+    </header>
 
-        <!-- Bottom Input Bar -->
-        <footer class="footer-bar">
-            <div class="input-row">
-                <input type="text" id="text-query-input" placeholder="Ask anything in 14 Indic languages..." value="पीरियड 3 तत्व क्या हैं">
-                <button id="btn-submit-text" class="btn-execute">Execute RAG ➔</button>
+    <!-- App Main Layout -->
+    <div class="chat-app-container">
+        <!-- Sidebar Control Panel -->
+        <aside class="sidebar">
+            <button id="btn-new-chat" class="btn-new-chat">➕ New Chat Thread</button>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">14 INDIC LANGUAGES:</span>
+                <div class="lang-grid" id="lang-pills-container">
+                    <button class="lang-chip active" data-lang="auto">✨ Auto Detect</button>
+                    <button class="lang-chip" data-lang="hi">HI हिन्दी</button>
+                    <button class="lang-chip" data-lang="ta">TA தமிழ்</button>
+                    <button class="lang-chip" data-lang="te">TE తెలుగు</button>
+                    <button class="lang-chip" data-lang="bn">BN বাংলা</button>
+                    <button class="lang-chip" data-lang="mr">MR मराठी</button>
+                    <button class="lang-chip" data-lang="gu">GU ગુજરાતી</button>
+                    <button class="lang-chip" data-lang="kn">KN ಕನ್ನಡ</button>
+                    <button class="lang-chip" data-lang="ml">ML മലയാളം</button>
+                    <button class="lang-chip" data-lang="pa">PA ਪੰਜਾਬੀ</button>
+                    <button class="lang-chip" data-lang="as">AS অসমীয়া</button>
+                    <button class="lang-chip" data-lang="or">OR ଓଡ଼ିଆ</button>
+                    <button class="lang-chip" data-lang="ne">NE नेपाली</button>
+                    <button class="lang-chip" data-lang="sa">SA संस्कृतम्</button>
+                    <button class="lang-chip" data-lang="ur">UR اردو</button>
+                </div>
             </div>
-        </footer>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">CHUNKING STRATEGY:</span>
+                <div class="strat-list">
+                    <button class="strat-btn" data-strategy="fixed">Fixed-Size (80w)</button>
+                    <button class="strat-btn" data-strategy="semantic">Pure Semantic</button>
+                    <button class="strat-btn active" data-strategy="metadata">Metadata-Aware ★</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">GUARDRAIL AUDIT:</span>
+                <div class="audit-list">
+                    <div class="audit-item">
+                        <span class="audit-name">🛡️ Input Safety</span>
+                        <span id="guard-status-safety" class="audit-badge">PASS</span>
+                    </div>
+                    <div class="audit-item">
+                        <span class="audit-name">🎯 Relevance Score</span>
+                        <span id="guard-status-relevance" class="audit-badge">PASS</span>
+                    </div>
+                    <div class="audit-item">
+                        <span class="audit-name">🔗 Context Grounding</span>
+                        <span id="guard-status-grounding" class="audit-badge">PASS</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">TRY SAMPLE PRESETS:</span>
+                <div class="preset-grid">
+                    <button class="preset-btn" data-query="தலைநகரம்" data-lang="ta">TA: தலைநகரம்</button>
+                    <button class="preset-btn" data-query="पीरियड 3 तत्व" data-lang="hi">HI: पीरियड 3 तत्व</button>
+                    <button class="preset-btn" data-query="భారతదేశ రాజధాని" data-lang="te">TE: భారతదేశ రాజధాని</button>
+                    <button class="preset-btn" data-query="সুন্দরবন বিখ্যাত" data-lang="bn">BN: সুন্দরবন বিখ্যাত</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Conversational Chat Stream Workspace -->
+        <main class="chat-workspace">
+            <div class="chat-feed" id="chat-feed">
+                <!-- Welcome Initial Message -->
+                <div class="chat-message ai">
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble-card">
+                        <div class="bubble-header">
+                            <span class="bubble-sender">INDIC RAG ASSISTANT</span>
+                            <span>System Ready</span>
+                        </div>
+                        <div class="bubble-text">
+                            Namaste! Welcome to the <strong>Voice-Enabled Indic RAG Chatbot</strong>. 
+                            <br>Ask any question by speaking into the microphone 🎤 or typing in any of the 14 Indic languages!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Input Bar -->
+            <footer class="chat-input-bar">
+                <div class="input-bar-inner">
+                    <button id="btn-record" class="mic-bar-btn" title="Click to speak">
+                        <svg class="mic-bar-svg" viewBox="0 0 24 24">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="22"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="text-query-input" placeholder="Type or speak a question in any of 14 Indic languages..." value="पीरियड 3 तत्व क्या हैं">
+                    <button id="btn-submit-text" class="btn-send-mint">Send ➔</button>
+                </div>
+            </footer>
+        </main>
     </div>
 
     <!-- Live Eval Modal -->

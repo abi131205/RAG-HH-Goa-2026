@@ -39,10 +39,10 @@
             background-color: var(--bg-deep);
             color: var(--text-white);
             font-family: var(--font-body);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 40px;
             background-image: radial-gradient(circle at 50% 0%, rgba(52, 211, 153, 0.18), transparent 75%);
         }
 
@@ -51,7 +51,7 @@
             background: var(--bg-card);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-glass);
-            padding: 12px 24px;
+            padding: 14px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -103,13 +103,15 @@
         }
         .btn-mint:hover { background: #6EE7B7; }
 
-        /* App Container */
+        /* App Container - Naturally Scrollable */
         .chat-app-container {
-            flex: 1;
             display: grid;
             grid-template-columns: 280px 1fr;
-            height: calc(100vh - 60px);
-            overflow: hidden;
+            min-height: calc(100vh - 80px);
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         @media (max-width: 900px) {
@@ -120,12 +122,13 @@
         /* Sidebar Control Center */
         .sidebar {
             background: rgba(6, 26, 18, 0.95);
-            border-right: 1px solid var(--border-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 18px;
-            overflow-y: auto;
+            height: fit-content;
         }
 
         .btn-new-chat {

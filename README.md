@@ -1,4 +1,4 @@
-# Voice-Enabled Indic RAG System (ai4bharat/MSMARCO-XI)
+# Vaani RAG — Voice-Enabled Indic RAG System (ai4bharat/MSMARCO-XI)
 
 > **Production-grade Retrieval-Augmented Generation (RAG) pipeline supporting all 14 Indic languages built for #RAGInGoa Hackathon 2026 (https://hhgoa.com/).**
 

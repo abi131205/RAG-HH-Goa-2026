@@ -129,9 +129,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnSubmitText) {
         btnSubmitText.addEventListener('click', () => executeRAGQuery(textInput.value));
     }
+    if (textInput) {
+        textInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                executeRAGQuery(textInput.value);
+            }
+        });
+    }
 
     async function executeRAGQuery(textQuery = null, audioBase64 = null) {
-        const queryText = textQuery || textInput.value;
+        const queryText = textQuery !== null ? textQuery : textInput.value;
         if (!queryText.trim() && !audioBase64) return;
 
         // Append User Speech/Text Message to Chat Stream
@@ -173,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="bubble-sender">YOU</span>
                     <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
-                <div class="bubble-text">${text}</div>
+                <div class="bubble-text">${escapeHtml(text)}</div>
             </div>
         `;
         chatFeed.appendChild(msgDiv);
@@ -212,12 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const chunksHtml = (data.retrieved_chunks || []).map(c => `
             <div class="context-chunk-item">
                 <span class="chunk-tag">[LANG: ${c.language.toUpperCase()}] Score: ${c.score.toFixed(4)} (ID: ${c.passage_id})</span>
-                <div>${c.raw_text}</div>
+                <div>${escapeHtml(c.raw_text)}</div>
             </div>
         `).join('');
 
         const accordionId = 'acc-' + Date.now();
         const isSuccess = data.status === 'SUCCESS';
+        const safeAnswer = data.answer.replace(/'/g, "\\'").replace(/\n/g, " ");
 
         msgDiv.innerHTML = `
             <div class="chat-avatar">🤖</div>
@@ -229,11 +238,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="badge-pill">${data.timing_ms.total_ms || 0}ms</span>
                     </div>
                 </div>
-                <div class="bubble-text">${data.answer}</div>
+                <div class="bubble-text">${escapeHtml(data.answer)}</div>
 
                 <div class="bubble-tools">
-                    <button class="tool-btn" onclick="speakText('${data.answer.replace(/'/g, "\\'")}')">🔊 Listen</button>
-                    <button class="tool-btn" onclick="copyText('${data.answer.replace(/'/g, "\\'")}')">📋 Copy</button>
+                    <button class="tool-btn" onclick="speakText('${safeAnswer}')">🔊 Listen</button>
+                    <button class="tool-btn" onclick="copyText('${safeAnswer}')">📋 Copy</button>
                     ${data.retrieved_chunks && data.retrieved_chunks.length > 0 ? 
                         `<button class="tool-btn" onclick="toggleAccordion('${accordionId}')">📚 Sources (${data.retrieved_chunks.length})</button>` : ''}
                 </div>
@@ -250,9 +259,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update Guardrail Status Cards
         const g = data.guardrail || {};
-        document.getElementById('guard-status-safety').textContent = g.is_safe ? 'PASS' : 'FAIL';
-        document.getElementById('guard-status-relevance').textContent = g.is_relevant ? 'PASS' : 'REJECT';
-        document.getElementById('guard-status-grounding').textContent = g.is_grounded ? 'PASS' : 'FAIL';
+        const safetyEl = document.getElementById('guard-status-safety');
+        const relEl = document.getElementById('guard-status-relevance');
+        const groundEl = document.getElementById('guard-status-grounding');
+        if (safetyEl) safetyEl.textContent = g.is_safe ? 'PASS' : 'FAIL';
+        if (relEl) relEl.textContent = g.is_relevant ? 'PASS' : 'REJECT';
+        if (groundEl) groundEl.textContent = g.is_grounded ? 'PASS' : 'FAIL';
     }
 
     function appendErrorMessage() {
@@ -271,6 +283,13 @@ document.addEventListener('DOMContentLoaded', () => {
         chatFeed.appendChild(msgDiv);
         chatFeed.scrollTop = chatFeed.scrollHeight;
     }
+});
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+}
 });
 
 // Helper Functions for Buttons

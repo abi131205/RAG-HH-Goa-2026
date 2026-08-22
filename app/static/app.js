@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnOpenEval) btnOpenEval.addEventListener('click', () => evalModal.classList.remove('hidden'));
     if (btnCloseEval) btnCloseEval.addEventListener('click', () => evalModal.classList.add('hidden'));
 
-    // Execute RAG
+    // 8. Execute RAG
     if (btnSubmitText) {
         btnSubmitText.addEventListener('click', () => executeRAGQuery(textInput.value));
     }
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const accordionId = 'acc-' + Date.now();
         const isSuccess = data.status === 'SUCCESS';
-        const safeAnswer = data.answer.replace(/'/g, "\\'").replace(/\n/g, " ");
+        const safeAnswer = (data.answer || '').replace(/'/g, "\\'").replace(/\n/g, " ");
 
         msgDiv.innerHTML = `
             <div class="chat-avatar">🤖</div>
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="badge-pill">${data.timing_ms.total_ms || 0}ms</span>
                     </div>
                 </div>
-                <div class="bubble-text">${escapeHtml(data.answer)}</div>
+                <div class="bubble-text">${escapeHtml(data.answer || '')}</div>
 
                 <div class="bubble-tools">
                     <button class="tool-btn" onclick="speakText('${safeAnswer}')">🔊 Listen</button>
@@ -286,13 +286,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.innerText = text;
     return div.innerHTML;
 }
-});
 
-// Helper Functions for Buttons
+// Global Helper Functions for Buttons
 function toggleAccordion(id) {
     const el = document.getElementById(id);
     if (el) el.classList.toggle('hidden');
